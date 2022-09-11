@@ -36,7 +36,6 @@ specifiers:
   stylelint-config-prettier: ^9.0.3
   stylelint-config-standard: ^28.0.0
   tailwindcss: ^3.1.8
-  turndown: ^7.1.1
   typescript: ^4.8.2
 
 devDependencies:
@@ -75,7 +74,6 @@ devDependencies:
   stylelint-config-prettier: 9.0.3_stylelint@14.11.0
   stylelint-config-standard: 28.0.0_stylelint@14.11.0
   tailwindcss: 3.1.8_postcss@8.4.16
-  turndown: 7.1.1
   typescript: 4.8.2
 
 packages:
@@ -1790,10 +1788,6 @@ packages:
     engines: {node: '>= 4'}
     dependencies:
       domelementtype: 2.3.0
-    dev: true
-
-  /domino/2.1.6:
-    resolution: {integrity: sha512-3VdM/SXBZX2omc9JF9nOPCtDaYQ67BGp5CoLpIQlO2KCAPETs8TcDHacF26jXadGbvUteZzRTeos2fhID5+ucQ==}
     dev: true
 
   /domutils/3.0.1:
@@ -5661,12 +5655,6 @@ packages:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
     dependencies:
       safe-buffer: 5.2.1
-    dev: true
-
-  /turndown/7.1.1:
-    resolution: {integrity: sha512-BEkXaWH7Wh7e9bd2QumhfAXk5g34+6QUmmWx+0q6ThaVOLuLUqsnkq35HQ5SBHSaxjSfSM7US5o4lhJNH7B9MA==}
-    dependencies:
-      domino: 2.1.6
     dev: true
 
   /type-check/0.4.0:
