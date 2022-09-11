@@ -1,15 +1,14 @@
 ---
-import type { IElement, SimplePost } from "@/types";
+import type { GhostPost, IElement } from "@/types";
 import { getLocaleTime } from "@/util";
 export interface Props extends IElement {
-	post: SimplePost;
+	post: GhostPost;
 	withDesc?: boolean;
 }
 
 const { post, as: Element = "div", withDesc = false } = Astro.props as Props;
 // const { publishDate } = post.frontmatter;
-// get publish date from either frontmatter or ghost post
-const publishDate = post.publishDate;
+const publishDate = post.published_at;
 const date = new Date(publishDate);
 const datetime = date.toISOString();
 const postDate = getLocaleTime(date, { month: "short" });
@@ -21,4 +20,8 @@ const postDate = getLocaleTime(date, { month: "short" });
 		{post.title}
 	</a>
 </Element>
-{withDesc && <q class="line-clamp-3 block italic">{post.description}</q>}
+{
+	withDesc && (
+		<q class="block italic line-clamp-3">{post.excerpt}</q>
+	)
+}

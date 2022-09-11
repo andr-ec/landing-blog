@@ -2,18 +2,25 @@
 import PageLayout from "@/layouts/Base";
 import BlogPostPreview from "@/components/BlogPostPreview";
 import Pagination from "@/components/Paginator";
-import { getAllTags, sortMDByDate } from "src/util";
-import type { Post, Page, MDXInstance } from "@/types";
+import { getAllTags, ghostToSimplePost, mdxToSimplePost, sortMDByDate } from "src/util";
+import type { Post, Page, MDXInstance, SimplePost } from "@/types";
+import ghost from "@/ghost";
+
 
 export async function getStaticPaths({ paginate }) {
-	const allPosts = await Astro.glob<Post>("./*.mdx");
-	const allPostsByDate = sortMDByDate(allPosts);
-	const allTags = getAllTags(allPosts);
-	return paginate(allPostsByDate, { props: { allTags }, pageSize: 10 });
+	const mdxPosts = await Astro.glob<Post>("./*.mdx");
+	const mdxPostsByDate = sortMDByDate(mdxPosts).map(mdxToSimplePost);
+	const allTags = getAllTags(mdxPosts);
+	const ghostPosts = await ghost.posts
+    .browse({limit: 5, include: 'tags,authors', filter: 'author:andre'})
+		.then((p) => {
+			return p.map(ghostToSimplePost);
+		})
+	return paginate([...mdxPostsByDate, ...ghostPosts], { props: { allTags }, pageSize: 10 });
 }
 
 export interface Props {
-	page: Page<MDXInstance<Post>>;
+	page: Page<SimplePost>;
 	allTags: string[];
 }
 

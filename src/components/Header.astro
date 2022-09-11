@@ -28,21 +28,37 @@ const url = new URL(Astro.request.url);
 			class="logo"
 			aria-current={url.pathname === "/" ? "page" : false}
 		>
-			<svg fill="none" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 272 480">
-				<title>Logo</title>
+			<svg
+				xmlns="http://www.w3.org/2000/svg"
+				xmlns:xlink="http://www.w3.org/1999/xlink"
+				version="1.1"
+				id="Layer_1"
+				x="0px"
+				y="0px"
+				viewBox="0 0 512 512"
+				style="enable-background:new 0 0 512 512;"
+				xml:space="preserve"
+			>
 				<path
-					d="M181.334 93.333v-40L226.667 80v40l-45.333-26.667ZM136.001 53.333 90.667 26.667v426.666L136.001 480V53.333Z"
-					fill="#B04304"></path>
+					style="fill:#25B6D2;"
+					d="M0,260.908l174.648-81.136v38.568l-132.08,57.848v0.728l132.08,57.848v38.568L0,292.212V260.908z"
+				></path>
 				<path
-					d="m136.001 119.944 45.333-26.667 45.333 26.667-45.333 26.667-45.333-26.667ZM90.667 26.667 136.001 0l45.333 26.667-45.333 26.666-45.334-26.666ZM181.334 53.277l45.333-26.666L272 53.277l-45.333 26.667-45.333-26.667ZM0 213.277l45.333-26.667 45.334 26.667-45.334 26.667L0 213.277ZM136 239.944l-45.333-26.667v53.333L136 239.944Z"
-					fill="#FF5D01"></path>
+					style="fill:#415E72;"
+					d="M201.6,387.9l77.864-263.8h36.752L238.4,387.9H201.6z"></path>
 				<path
-					d="m136 53.333 45.333-26.666v120L226.667 120V80L272 53.333V160l-90.667 53.333v240L136 480V306.667L45.334 360V240l45.333-26.667v53.334L136 240V53.333Z"
-					fill="#53C68C"></path>
-				<path d="M45.334 240 0 213.334v120L45.334 360V240Z" fill="#B04304"
+					style="fill:#E04F5F;"
+					d="M512,293.284L337.352,373.34v-38.568l134.992-57.848v-0.728L337.352,218.34v-38.568L512,259.828  V293.284z"
 				></path>
 			</svg>
-			<span>Astro Cactus</span>
+			<!-- andr.ec then andre.e -->
+			<!-- the . and c will switch places -->
+			<span class="flex">
+				<div>andr</div>
+				<div class="animate-right-left">.</div>
+				<div class="animate-left-right">e</div>
+				<div>c</div>
+			</span>
 		</a>
 		<nav id="navigation-menu" aria-label="Main">
 			<a href="/" aria-current={url.pathname === "/" ? "page" : false}>Home</a>
@@ -82,11 +98,11 @@ const url = new URL(Astro.request.url);
 			@apply inline-flex items-center grayscale hover:filter-none sm:relative sm:inline-block;
 
 			svg {
-				@apply mr-3 h-10 w-6 sm:absolute sm:left-[-4.5rem] sm:mr-0 sm:h-20 sm:w-12;
+				@apply mr-3 h-10 w-6 sm:absolute sm:left-[-4.5rem] sm:mr-0 sm:h-20 sm:w-12 md:pb-10;
 			}
 
 			> span {
-				@apply text-xl font-bold sm:text-2xl;
+				@apply text-3xl font-bold;
 			}
 		}
 

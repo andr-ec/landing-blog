@@ -2,27 +2,39 @@
 import PageLayout from "@/layouts/Base";
 import BlogPostPreview from "@/components/BlogPostPreview";
 import SocialList from "@/components/SocialList";
-import { sortMDByDate } from "@/util";
+import { ghostToSimplePost, mdxToSimplePost, sortMDByDate } from "@/util";
 import type { Post } from "@/types";
+import ghost from "@/ghost";
 
 const meta = {
-	title: "Astro Cactus",
-	description: "The perfect starter for your perfect blog.",
+	title: "andre c.",
+	description: "Software development, ai, and learning",
 };
 
 const MAX_POSTS = 10;
-const allPosts = await Astro.glob<Post>("./posts/*.mdx");
-const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
+const mdxPosts = await Astro.glob<Post>("./posts/*.mdx");
+const mdxPostsByDate = sortMDByDate(mdxPosts)
+	.slice(0, MAX_POSTS)
+	.map(mdxToSimplePost);
+
+const ghostPosts = await ghost.posts
+	.browse({ limit: 5, include: "tags,authors", filter: "author:andre" })
+	.then((p) => {
+		return p.map(ghostToSimplePost);
+	});
+
+const allPostsByDate = [...mdxPostsByDate, ...ghostPosts];
 ---
 
 <PageLayout meta={meta}>
 	<section>
-		<h1 class="mb-6 title">Hello World!</h1>
+		<h1 class="mb-6 title">Hey There!</h1>
 		<p class="mb-4">
-			Hi, I’m a theme for Astro, an example of how you can use this starter to
-			create a personal blog. If you want to know more about how you can
-			customise me, add more posts, and make it your own, click on one of the
-			social links which will take you to my repo.
+			Hi, I'm andre c. I'm a software engineer and I run <a
+				href="http://lambdo.com"
+				target="_blank"
+				class="cactus-link">Lambdo</a
+			>. I write about software development, ai, and learning.
 		</p>
 		<SocialList />
 	</section>
@@ -31,60 +43,11 @@ const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS);
 		<ul class="space-y-4 sm:space-y-2">
 			{
 				allPostsByDate.map((p) => (
-					<li class="flex flex-wrap items-center gap-x-2 [&_q]:w-full">
+					<li class="[&_q]:w-full flex flex-wrap items-center gap-x-2">
 						<BlogPostPreview post={p} as="h2" />
 					</li>
 				))
 			}
-		</ul>
-	</section>
-	<section class="mt-16">
-		<h2 class="mb-4 text-xl title">Technologies</h2>
-		<ul class="space-y-4 sm:space-y-2">
-			<li>
-				<a
-					href="https://astro.build"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="inline-block cactus-link"
-					>Astro
-				</a>:
-				<p class="inline-block sm:mt-2">Build fast websites, faster.</p>
-			</li>
-			<li>
-				<a
-					href="https://docs.astro.build/en/guides/integrations-guide/image/"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="inline-block cactus-link"
-					>@astro/image
-				</a>:
-				<p class="inline-block sm:mt-2">
-					An Astro integration for optimising images in Astro projects.
-				</p>
-			</li>
-			<li>
-				<a
-					href="https://tailwindcss.com"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="inline-block cactus-link"
-					>Tailwind CSS
-				</a>:
-				<p class="inline-block sm:mt-2">
-					Rapidly build modern websites without ever leaving your HTML.
-				</p>
-			</li>
-			<li>
-				<a
-					href="https://mdxjs.com/"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="inline-block cactus-link"
-					>MDX
-				</a>:
-				<p class="inline-block sm:mt-2">Markdown for the component era.</p>
-			</li>
 		</ul>
 	</section>
 </PageLayout>

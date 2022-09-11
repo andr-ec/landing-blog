@@ -8,6 +8,36 @@ module.exports = {
 	},
 	theme: {
 		extend: {
+			keyframes: {
+				leftRight: {
+					"0%": { transform: "translateX(0rem);" },
+					"30%": { transform: "translateX(0rem);" },
+					// "10%": { transform: "rotate(14deg)" },
+					// "20%": { transform: "rotate(-8deg)" },
+					// "30%": { transform: "rotate(14deg)" },
+					// "40%": { transform: "rotate(-4deg)" },
+					"40%": { transform: "translateX(-1rem);" },
+					"90%": { transform: "translateX(-1rem);" },
+					// "60%": { transform: "rotate(0.0deg)" },
+					"100%": { transform: "translateX(0rem);" },
+				},
+				rightLeft: {
+					"0%": { transform: "translateX(0rem);" },
+					"30%": { transform: "translateX(0rem);" },
+					// "10%": { transform: "rotate(14deg)" },
+					// "20%": { transform: "rotate(-8deg)" },
+					// "30%": { transform: "rotate(14deg)" },
+					// "40%": { transform: "rotate(-4deg)" },
+					"40%": { transform: "translateX(1rem);" },
+					"90%": { transform: "translateX(1rem);" },
+					// "60%": { transform: "rotate(0.0deg)" },
+					"100%": { transform: "translateX(0rem);" },
+				},
+			},
+			animation: {
+				"left-right": "leftRight 5s linear infinite",
+				"right-left": "rightLeft 5s linear infinite",
+			},
 			colors: {
 				bgColor: "hsl(var(--theme-bg) / <alpha-value>)",
 				textColor: "hsl(var(--theme-text) / <alpha-value>)",
@@ -15,8 +45,12 @@ module.exports = {
 				accent: "hsl(var(--theme-accent) / <alpha-value>)",
 				"accent-2": "hsl(var(--theme-accent-2) / <alpha-value>)",
 			},
+			// transitionProperty: {
+			// 	height: "height",
+			// },
 			transitionProperty: {
 				height: "height",
+				spacing: "margin, padding",
 			},
 			typography: (theme) => ({
 				cactus: {

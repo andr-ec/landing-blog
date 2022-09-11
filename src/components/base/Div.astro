@@ -1,0 +1,15 @@
+---
+const props = Astro.props;
+const classMap = {
+	"kg-bookmark-content": "grow",
+	"kg-bookmark-thumbnail": "flex-initial basis-1/4 h-40",
+	"kg-bookmark-description": "hidden",
+	"kg-bookmark-metadata": "h-20 w-full flex",
+};
+
+const newClass = Object.hasOwn(classMap, props.class)
+	? classMap[props.class]
+	: props.class;
+---
+
+<div class={newClass}><slot /></div>

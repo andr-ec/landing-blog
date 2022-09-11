@@ -1,4 +1,4 @@
-import type { MDXInstance, Post } from "./types";
+import type { GhostPost, MDXInstance, Post, SimplePost } from "./types";
 
 export function sortMDByDate(posts: MDXInstance<Post>[] = []) {
 	return posts.sort(
@@ -60,4 +60,26 @@ export function getLocaleTime(
 		...options,
 	};
 	return new Intl.DateTimeFormat(locale, formatOptions).format(date);
+}
+
+export function mdxToSimplePost(post: MDXInstance<Post>): SimplePost {
+	return {
+		title: post.frontmatter.title,
+		description: post.frontmatter.description,
+		url: post.url,
+		publishDate: post.frontmatter.publishDate
+	}
+}
+
+export function ghostToSimplePost(post: GhostPost): SimplePost {
+	return {
+		title: post.title,
+		description: post.excerpt,
+		slug: post.slug,
+		// url: post.url,
+		url: '/posts/ghost/' + post.slug,
+		publishDate: post.published_at,
+		tags: [],
+		headings: []
+	}
 }
