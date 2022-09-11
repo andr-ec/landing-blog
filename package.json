@@ -6,6 +6,7 @@
 		"dev": "astro dev",
 		"start": "astro dev",
 		"build": "astro build",
+		"cloudflare-build": "npm install -g pnpm && pnpm install && pnpm run astro build",
 		"preview": "astro preview",
 		"format": "prettier -w ./src ./src/**/*.astro"
 	},
