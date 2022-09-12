@@ -1,0 +1,178 @@
+---
+layout: "@/layouts/BlogPost"
+title: Astro + Ghost Blog
+publishDate: 13 September 2022
+description: Creating a Blog with Astro and Ghost
+tags: ["astro", "webdev", "ghost"]
+---
+
+import { Image } from "@astrojs/image/components";
+
+I currently run a company blog on Ghost, and I wanted to try out Astro on my personal blog.
+The twist is that I wanted to use Ghost as a Headless CMS only for my posts, and override the default ghost theme with Astro.
+
+It's actually what's used to power this blog.
+Some posts are brought in from ghost some are written in Astro (MDX).
+
+# Ghost Previews
+
+The first step Is showing previews of ghost content and then linking to the original content
+
+Ghost has an sdk https://ghost.org/docs/content-api/javascript/ we can install using:
+
+```bash
+npm install @tryghost/content-api
+```
+
+Then we can use the sdk to get the posts
+
+```js
+---
+
+// index.astro
+import GhostContentAPI from '@tryghost/content-api'
+const ghost = new GhostContentAPI({
+  url: 'https://blog.mysite.com',
+  key: 'my-ghost-content-key',
+  version: "v5.0"
+});
+
+
+
+const ghostPosts = await ghost.posts
+    .browse({limit: 5, include: 'tags,authors', filter: 'author:andre'})
+
+---
+		<ul>
+
+			{
+				ghostPosts.map((post) => (
+					<li>
+						<time {datetime} class="min-w-[120px] text-gray-500">{postDate}</time>
+							<Element>
+								<a href={post.url} class="inline-block cactus-link line-clamp-1">
+									{post.title}
+								</a>
+							</Element>
+							{
+								withDesc && (
+									<q class="block italic line-clamp-3">{post.excerpt}</q>
+								)
+							}
+					</li>
+				))
+			}
+        </ul>
+```
+
+That's really it if you want to show previews of your ghost content.
+it will link to the the original content on your ghost blog.
+
+# Embedding Ghost Content
+
+Now to embed the ghost content we'll need to pull in another dependency
+
+```bash
+npm install -D astro-remote
+```
+
+`remote-astro` is a plugin that allows you to render remote html or markdown.
+One thing to look out for is that it's just a proof of concept and is not production ready.
+But it works well enough for my personal blog at the moment.
+The biggest bug is that some content is not rendered correctly. 🤷🏽‍♂️
+
+All that's needed is a dynamic route and components to render the content.
+
+The Dynamic route:
+
+```js
+---
+// [slug].astro
+import BlogPost from "@/layouts/BlogPost";
+import ghost from "@/ghost";
+import { ghostToSimplePost } from "@/util";
+// https://stackblitz.com/edit/github-scvgee?file=src%2Fpages%2Findex.astro
+import { Markup } from "astro-remote";
+import { components, sanitize } from "src/components/base/components";
+
+export async function getStaticPaths() {
+	const ghostPosts = await ghost.posts
+		.browse({ limit: 5, include: "tags,authors", filter: "author:andre" })
+		.then((p) => {
+			return p.map(ghostToSimplePost);
+		});
+
+	const paths = ghostPosts.map((post) => {
+		return {
+			params: { slug: post.slug },
+			props: { post },
+		};
+	});
+	return paths;
+}
+const { slug } = Astro.params;
+const postContent = await ghost.posts.read(
+	{ slug },
+	{ formats: ["html", "plaintext"] }
+);
+const { post } = Astro.props;
+const blogContent = { ...post, description: undefined };
+---
+
+<BlogPost content={blogContent} headings={post.headings}>
+	<Markup content={postContent.html} {sanitize} {components} />
+</BlogPost>
+```
+
+The Components:
+
+```js
+import Paragraph from "./Paragraph.astro";
+import Title from "./Title.astro";
+import Span from "./Span.astro";
+import A from "./A.astro";
+import Div from "./Div.astro";
+import Img from "./Img.astro";
+
+export const sanitize = {
+	dropElements: ["head"],
+	blockElements: ["html", "body"],
+};
+
+export const components = {
+	h1: Title,
+	p: Paragraph,
+	span: Span,
+	a: A,
+	div: Div,
+	img: Img,
+};
+```
+
+Notice that I import each component so that I can override the default behavior of the components.
+For example: I want to style with tailwind classes based on the input class from ghost.
+
+```js
+---
+// Div.astro
+const props = Astro.props;
+const classMap = {
+	"kg-bookmark-content": "grow",
+	"kg-bookmark-thumbnail": "flex-initial basis-1/4 h-40",
+	"kg-bookmark-description": "hidden",
+	"kg-bookmark-metadata": "h-20 w-full flex",
+};
+
+const newClass = Object.hasOwn(classMap, props.class)
+	? classMap[props.class]
+	: props.class;
+---
+
+<div class={newClass}><slot /></div>
+```
+
+That's about it.
+
+The blog will need to be rebuilt every time you make a change to the ghost content, which can be automated.
+
+You can find all the code on the github repo: [https://github.com/andr-ec/landing-blog](https://github.com/andr-ec/landing-blog)
