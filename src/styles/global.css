@@ -32,3 +32,22 @@
 }
 @tailwind components;
 @tailwind utilities;
+
+@layer components {
+  .kg-bookmark-container {
+    @apply flex;
+  }
+  .kg-bookmark-content {
+    @apply grow;
+  }
+  .kg-bookmark-thumbnail {
+    @apply flex-initial basis-1/4 h-40;
+  }
+	.kg-bookmark-description {
+		@apply hidden;
+	}
+	.kg-bookmark-metadata {
+		@apply h-20 w-full flex;
+	}
+  /* ... */
+}

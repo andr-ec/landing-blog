@@ -2,9 +2,6 @@
 import BlogPost from "@/layouts/BlogPost";
 import ghost from "@/ghost";
 import { ghostToSimplePost } from "@/util";
-// https://stackblitz.com/edit/github-scvgee?file=src%2Fpages%2Findex.astro
-import { Markup } from "astro-remote";
-import { components, sanitize } from "src/components/base/components";
 
 export async function getStaticPaths() {
 	const ghostPosts = await ghost.posts
@@ -26,12 +23,11 @@ const postContent = await ghost.posts.read(
 	{ slug },
 	{ formats: ["html", "plaintext"] }
 );
-// const turndownService = new TurndownService({codeBlockStyle: 'fenced', headingStyle: 'atx', hr: '---'});
-// const content = turndownService.turndown(postContent.html);
 const { post } = Astro.props;
 const blogContent = { ...post, description: undefined };
 ---
 
 <BlogPost content={blogContent} headings={post.headings}>
-	<Markup content={postContent.html} {sanitize} {components} />
+	<Fragment set:html={postContent.html} />
+	<!-- <Markup content={postContent.html} {sanitize} {components} /> -->
 </BlogPost>

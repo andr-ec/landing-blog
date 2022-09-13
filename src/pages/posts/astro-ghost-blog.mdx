@@ -68,18 +68,9 @@ const ghostPosts = await ghost.posts
 That's really it if you want to show previews of your ghost content.
 it will link to the the original content on your ghost blog.
 
-# Embedding Ghost Content
+# Embedding Ghost Content and styling with tailwind
 
-Now to embed the ghost content we'll need to pull in another dependency
-
-```bash
-npm install -D astro-remote
-```
-
-`remote-astro` is a plugin that allows you to render remote html or markdown.
-One thing to look out for is that it's just a proof of concept and is not production ready.
-But it works well enough for my personal blog at the moment.
-The biggest bug is that some content is not rendered correctly. 🤷🏽‍♂️
+The html content from ghost comes with classes. We can use tailwind to implement those classes.
 
 All that's needed is a dynamic route and components to render the content.
 
@@ -90,7 +81,80 @@ The Dynamic route:
 // [slug].astro
 import BlogPost from "@/layouts/BlogPost";
 import ghost from "@/ghost";
-import { ghostToSimplePost } from "@/util";
+
+export async function getStaticPaths() {
+	const ghostPosts = await ghost.posts
+		.browse({ limit: 5, include: "tags,authors", filter: "author:andre" })
+
+	const paths = ghostPosts.map((post) => {
+		return {
+			params: { slug: post.slug },
+			props: { post },
+		};
+	});
+	return paths;
+}
+const { slug } = Astro.params;
+const postContent = await ghost.posts.read(
+	{ slug },
+	{ formats: ["html", "plaintext"] }
+);
+const { post } = Astro.props;
+const blogContent = { ...post, description: undefined };
+---
+
+<BlogPost content={blogContent} headings={post.headings}>
+	<Fragment set:html={postContent.html} />
+</BlogPost>
+```
+
+Then implement any ghost classes with the tailwind components layer.
+
+```css
+/* global.css */
+... @layer components {
+	.kg-bookmark-container {
+		@apply flex;
+	}
+	.kg-bookmark-content {
+		@apply grow;
+	}
+	.kg-bookmark-thumbnail {
+		@apply h-40 flex-initial basis-1/4;
+	}
+	.kg-bookmark-description {
+		@apply hidden;
+	}
+	.kg-bookmark-metadata {
+		@apply flex h-20 w-full;
+	}
+}
+```
+
+That will accomplish the styling of the ghost content.
+But what if we want to use a custom component for a specific element?
+
+# Embedding Ghost Content w/ remote-astro
+
+`remote-astro` is a plugin that allows you to render remote html or markdown with custom components.
+One thing to look out for is that it's just a proof of concept and is not production ready.
+The biggest issue i've found is some content is not rendered correctly. 🤷🏽‍♂️
+So not the best solution at the moment.
+When it's more stable it could help customize the ghost content even more.
+
+it can be installed with:
+
+```bash
+npm install -D astro-remote
+```
+
+They dynamic route will then look like this:
+
+```js
+---
+// [slug].astro
+import BlogPost from "@/layouts/BlogPost";
+import ghost from "@/ghost";
 // https://stackblitz.com/edit/github-scvgee?file=src%2Fpages%2Findex.astro
 import { Markup } from "astro-remote";
 import { components, sanitize } from "src/components/base/components";
@@ -98,9 +162,6 @@ import { components, sanitize } from "src/components/base/components";
 export async function getStaticPaths() {
 	const ghostPosts = await ghost.posts
 		.browse({ limit: 5, include: "tags,authors", filter: "author:andre" })
-		.then((p) => {
-			return p.map(ghostToSimplePost);
-		});
 
 	const paths = ghostPosts.map((post) => {
 		return {
@@ -150,29 +211,29 @@ export const components = {
 ```
 
 Notice that I import each component so that I can override the default behavior of the components.
-For example: I want to style with tailwind classes based on the input class from ghost.
+For example: I could use Astro's Image component to render properly sized images.
 
 ```js
 ---
 // Div.astro
-const props = Astro.props;
-const classMap = {
-	"kg-bookmark-content": "grow",
-	"kg-bookmark-thumbnail": "flex-initial basis-1/4 h-40",
-	"kg-bookmark-description": "hidden",
-	"kg-bookmark-metadata": "h-20 w-full flex",
-};
+---
+import { Image } from "@astrojs/image/components";
 
-const newClass = Object.hasOwn(classMap, props.class)
-	? classMap[props.class]
-	: props.class;
+const props = Astro.props;
 ---
 
-<div class={newClass}><slot /></div>
+<Image src={props.src} alt={props.alt} />
 ```
+
+# Conclusion
+
+Ideally I would use both methods to style and render my content.
+For now this is enough for a personal blog.
+Although I might look into contributing to `remote-astro` to fix that issue at some point.
 
 That's about it.
 
-The blog will need to be rebuilt every time you make a change to the ghost content, which can be automated.
+Take note that the blog will need to be rebuilt every time a change is made to the ghost content,
+though that can be automated.
 
-You can find all the code on the github repo: [https://github.com/andr-ec/landing-blog](https://github.com/andr-ec/landing-blog)
+All the code can be found on the github repo: [https://github.com/andr-ec/landing-blog](https://github.com/andr-ec/landing-blog)
