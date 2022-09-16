@@ -1,8 +1,8 @@
 ---
 layout: "@/layouts/BlogPost"
-title: Astro + Ghost Blog
+title: Astro + Ghost + Tailwind CSS
 publishDate: 13 September 2022
-description: Creating a Blog with Astro and Ghost
+description: Creating a Blog with Astro, Ghost, and Tailwind CSS
 tags: ["astro", "webdev", "ghost"]
 ---
 
@@ -12,7 +12,7 @@ I currently run a company blog on Ghost, and I wanted to try out Astro on my per
 The twist is that I wanted to use Ghost as a Headless CMS only for my posts, and override the default ghost theme with Astro.
 
 It's actually what's used to power this blog.
-Some posts are brought in from ghost some are written in Astro (MDX).
+Some posts are brought in from ghost. Others (like this one) are written directly for Astro (in MDX).
 
 # Ghost Previews
 
@@ -188,6 +188,7 @@ const blogContent = { ...post, description: undefined };
 The Components:
 
 ```js
+// components.ts
 import Paragraph from "./Paragraph.astro";
 import Title from "./Title.astro";
 import Span from "./Span.astro";
@@ -235,4 +236,8 @@ That's about it.
 Take note that the blog will need to be rebuilt every time a change is made to the ghost content,
 though that can be automated.
 
-All the code can be found on the github repo: [https://github.com/andr-ec/landing-blog](https://github.com/andr-ec/landing-blog)
+All the code for this blog can be found on the github repo: [https://github.com/andr-ec/landing-blog](https://github.com/andr-ec/landing-blog)
+
+Someone made a starter project for ghost and astro. Though it doesn't use tailwind. [https://github.com/PhilDL/astro-starter-ghost](https://github.com/PhilDL/astro-starter-ghost)
+
+Thanks for reading.
